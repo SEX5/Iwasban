@@ -1,0 +1,6 @@
+{
+  "name": "CarX Street Management Panel",
+  "description": "A comprehensive web-based management panel for CarX Street accounts, featuring automated unbanning, profile saving, and subscription management using Supabase.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
