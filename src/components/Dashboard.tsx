@@ -521,7 +521,7 @@ export default function Dashboard() {
               }}
               className="ml-3 px-2 py-0.5 text-[8px] font-black uppercase bg-zinc-900 border border-zinc-800 text-zinc-500 hover:text-brand-accent hover:border-brand-accent/40 rounded transition-all flex items-center gap-1"
             >
-              <RefreshCw className="w-2 h-2" /> Force Run Daemon
+              <RefreshCcw className="w-2 h-2" /> Force Run Daemon
             </button>
           </div>
           <div className="flex items-center gap-4 text-right">

@@ -656,6 +656,7 @@ async function startServer() {
 
   app.listen(PORT, "0.0.0.0", () => {
     console.log(`Server running on http://localhost:${PORT}`);
+    addDaemonLog("sys", "System online. Backup daemon sequence initialized.");
     
     // Register background daemon check (every 30 minutes)
     setInterval(runAutomaticBackupCheck, 30 * 60 * 1000);
