@@ -40,6 +40,7 @@ export default function Dashboard() {
   const [daemonLogs, setDaemonLogs] = useState<LogEntry[]>([]);
   const [consoleTab, setConsoleTab] = useState<'all' | 'app' | 'daemon'>('all');
   const [searchTerm, setSearchTerm] = useState('');
+  const [statusFilter, setStatusFilter] = useState('all');
   const [selectedProfileJson, setSelectedProfileJson] = useState<string | null>(null);
   const [selectedProfileEmail, setSelectedProfileEmail] = useState<string>('');
   const [copied, setCopied] = useState(false);
@@ -265,9 +266,11 @@ export default function Dashboard() {
     }
   }
 
-  const filteredAccounts = accounts.filter(acc => 
-    acc.email && acc.email.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const filteredAccounts = accounts.filter(acc => {
+    const matchesSearch = acc.email && acc.email.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesStatus = statusFilter === 'all' || acc.status === statusFilter;
+    return matchesSearch && matchesStatus;
+  });
 
   return (
     <div className="min-h-screen lg:h-screen bg-brand-bg text-zinc-100 font-sans flex flex-col lg:overflow-hidden select-none">
@@ -351,15 +354,15 @@ export default function Dashboard() {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <label className="text-[10px] font-bold text-zinc-500 uppercase tracking-wider">Subscription Days</label>
-                  <select 
+                  <input 
+                    type="number"
+                    min="1"
+                    max="3650"
+                    placeholder="30"
                     className="w-full bg-black border border-brand-border p-3 sm:p-4 rounded text-xs sm:text-sm focus:outline-none focus:border-brand-accent font-mono"
                     value={days}
-                    onChange={(e) => setDays(parseInt(e.target.value))}
-                  >
-                    <option value={30}>30 Days</option>
-                    <option value={90}>90 Days</option>
-                    <option value={365}>365 Days</option>
-                  </select>
+                    onChange={(e) => setDays(parseInt(e.target.value) || 0)}
+                  />
                 </div>
                 <div className="space-y-2">
                   <label className="text-[10px] font-bold text-zinc-500 uppercase tracking-wider">Sync Profile</label>
@@ -405,11 +408,21 @@ export default function Dashboard() {
           <div className="p-4 bg-zinc-900/30 border-b border-brand-border flex items-center justify-between shrink-0">
             <h3 className="text-xs font-black uppercase text-zinc-400 tracking-tighter">Recent Operations</h3>
             <div className="flex items-center gap-2">
+              <select 
+                value={statusFilter}
+                onChange={(e) => setStatusFilter(e.target.value)}
+                className="bg-black border border-brand-border px-2 py-1 rounded text-[10px] focus:outline-none focus:border-brand-accent text-zinc-400 font-bold uppercase"
+              >
+                <option value="all">All Status</option>
+                <option value="active">Active</option>
+                <option value="banned">Banned</option>
+                <option value="expired">Expired</option>
+              </select>
               <div className="relative">
                 <Search className="absolute left-2 top-1/2 -translate-y-1/2 w-3 h-3 text-zinc-500" />
                 <input 
                   type="text" 
-                  placeholder="Filter..." 
+                  placeholder="Search..." 
                   className="bg-black border border-brand-border pl-7 pr-2 py-1 rounded text-[10px] focus:outline-none focus:border-brand-accent w-28 sm:w-32"
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
