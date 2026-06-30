@@ -121,14 +121,15 @@ export default function Dashboard() {
   }
 
   async function fetchAccounts() {
+    // Optimization: Selecting only necessary columns to avoid fetching huge profile_data JSON payloads for every account
     const { data, error } = await supabase
       .from('accounts')
-      .select('*')
+      .select('email, status, expiry_date, updated_at, nickname, money, gold, cars_count')
       .order('updated_at', { ascending: false });
 
     if (!error && data) {
-      setAccounts(data);
-      calculateStats(data);
+      setAccounts(data as Account[]);
+      calculateStats(data as Account[]);
     }
   }
 
@@ -328,7 +329,7 @@ export default function Dashboard() {
               <div className="space-y-2">
                 <label className="text-[10px] font-bold text-zinc-500 uppercase tracking-wider">Game Login ID (Email)</label>
                 <input 
-                  type="email" 
+                  type="text" 
                   placeholder="user@carx-street.com" 
                   className="w-full bg-black border border-brand-border p-3 sm:p-4 rounded text-xs sm:text-sm focus:outline-none focus:border-brand-accent transition-colors font-mono"
                   value={username}

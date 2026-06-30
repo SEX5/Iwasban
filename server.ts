@@ -122,7 +122,7 @@ app.post("/api/accounts/save", async (req, res) => {
     const { error } = await supabase
       .from("accounts")
       .upsert({
-        email: username.toLowerCase(),
+        email: username,
         password,
         last_token: token,
         profile_data: profileData,
@@ -140,7 +140,7 @@ app.post("/api/accounts/save", async (req, res) => {
         // Ignore error if it already exists or if we don't have create bucket permissions
       });
 
-      const fileName = `${username.toLowerCase().replace(/[@.]/g, "_")}_profile.json`;
+      const fileName = `${username.replace(/[@.]/g, "_")}_profile.json`;
       const fileBuffer = Buffer.from(JSON.stringify(profileData, null, 2));
 
       const { error: uploadError } = await supabase.storage
@@ -177,7 +177,7 @@ app.get("/api/storage/download", async (req, res) => {
   }
 
   try {
-    const fileName = `${email.toLowerCase().replace(/[@.]/g, "_")}_profile.json`;
+    const fileName = `${email.replace(/[@.]/g, "_")}_profile.json`;
     
     // Attempt to download from Storage
     const { data, error } = await supabase.storage
@@ -190,7 +190,7 @@ app.get("/api/storage/download", async (req, res) => {
       const { data: dbAccount } = await supabase
         .from("accounts")
         .select("profile_data")
-        .eq("email", email.toLowerCase())
+        .eq("email", email)
         .single();
 
       if (dbAccount && dbAccount.profile_data) {
@@ -242,7 +242,7 @@ app.post("/api/accounts/unban", async (req, res) => {
     const { data: dbAccount, error: dbError } = await supabase
       .from("accounts")
       .select("*")
-      .eq("email", username.toLowerCase())
+      .eq("email", username)
       .single();
 
     if (dbError || !dbAccount) {
@@ -323,7 +323,7 @@ app.post("/api/accounts/unban", async (req, res) => {
       await supabase
         .from("accounts")
         .update({ status: "active", last_sync: new Date().toISOString() })
-        .eq("email", username.toLowerCase());
+        .eq("email", username);
 
       res.json({ success: true, message: "Unbanned successfully" });
     } else {
@@ -404,7 +404,7 @@ async function runAutomaticBackupCheck() {
     addDaemonLog("sys", `Found ${accounts.length} account(s) to evaluate.`);
 
     for (const account of accounts) {
-      const email = account.email.toLowerCase();
+      const email = account.email;
       const password = account.password;
       if (!password) {
         addDaemonLog("info", `Skipping ${email} due to missing password.`);
